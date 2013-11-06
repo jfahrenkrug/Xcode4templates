@@ -1,5 +1,7 @@
-Xcode 4 Templates
-=================
+Xcode 4 Templates For Xcode 5
+=============================
+
+[I don't like Storyboards](http://stackoverflow.com/questions/9404471/when-to-use-storyboard-and-when-to-use-xibs/19457257#19457257) and I don't want to be forced to use them.
 
 This is a tool to extract Xcode 4 application templates and convert them to be used with Xcode 5 to get options like "Use Storyboards" back.
 
