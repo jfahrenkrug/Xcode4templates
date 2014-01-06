@@ -30,18 +30,31 @@ else
 		FileUtils.cp_r("#{xcode4_templates_path}/#{template[:path]}#{template[:package]}", destination_path)
 		file_name = "#{destination_path}/#{template[:package]}/TemplateInfo.plist"
 		puts "Fixing #{file_name}..."
+
 		# post-process the template file
 		text = File.read(file_name)
 		
 		# All the occurances of the storyboardApplication ID must be replaced in order for the the Xcode 4 copy to by used.
 		replace = text.gsub!("com.apple.dt.unit.storyboardApplication", "com.springenwerk.dt.unit.storyboardApplication")
-		
-		if	template[:original_id] && template[:new_id]
+		if replace
+			File.open(file_name, "w") { |file| file.puts replace }
+		end
+	
+		if template[:original_id] && template[:new_id]
+			text = File.read(file_name)
 			replace = text.gsub!(template[:original_id], template[:new_id])
+			if replace
+				File.open(file_name, "w") { |file| file.puts replace }
+			end
 		end
 		
-		File.open(file_name, "w") { |file| file.puts replace }
 	end
+
+	# The 'iOS Reference Counting' template needs some special care for the ARC option. Default is YES in Xcode 5 so this part adds NO
+	file_name = "#{destination_path}/iOS Reference Counting.xctemplate/TemplateInfo.plist"
+	system("/usr/libexec/PlistBuddy -c 'Add Options:0:Units:false:0:Project dict' '"+file_name+"'")
+	system("/usr/libexec/PlistBuddy -c 'Add Options:0:Units:false:0:Project:SharedSettings dict' '"+file_name+"'")
+	system("/usr/libexec/PlistBuddy -c 'Add Options:0:Units:false:0:Project:SharedSettings:CLANG_ENABLE_OBJC_ARC string NO' '"+file_name+"'")
 
 	puts "Done."
 end
